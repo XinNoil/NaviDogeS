@@ -1,0 +1,23 @@
+<resources>
+    <string name="app_name">NaviDoge</string>
+    <string name="button_collect">DATA COLLECT</string>
+    <string name="button_type">TYPE</string>
+    <string name="button_file">FILE</string>
+    <string name="button_log_start">START</string>
+    <string name="button_log_stop">STOP</string>
+    <string name="button_next">NEXT DIR</string>
+    <string name="button_set">SET</string>
+    <string name="button_interval">SET INTERVAL (ms)</string>
+    <string name="button_time">SET LOG TIME (s)</string>
+    <string name="toggleButtonTextView">SENSOR EVENT MODE</string>
+    <string name="toggleButtonTextView2">WIFI ASYNC SCAN</string>
+    <string name="ON">ON</string>
+    <string name="OFF">OFF</string>
+    <string-array name="data_type">
+        <item>WiFi</item>
+        <item>ACCELEROMETER</item>
+        <item>MAGNETIC_FIELD</item>
+        <item>GYROSCOPE</item>
+        <item>GRAVITY</item>
+    </string-array>
+</resources>
