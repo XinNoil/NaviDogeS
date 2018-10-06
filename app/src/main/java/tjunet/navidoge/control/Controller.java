@@ -209,6 +209,7 @@ public class Controller implements Serializable {
     };
 
     public void startLog(){
+        log_time_left = log_time;
         if (logging){
             Toast.makeText(context, "CAN NOT START WHEN LOGGING!", Toast.LENGTH_LONG).show();
         }
@@ -228,7 +229,6 @@ public class Controller implements Serializable {
 
     public void stopLog(){
         logging=false;
-        log_time_left=log_time;
         wiFiScan.recordNo=0;
         Toast.makeText(context, fileSave.getFileName()+" saved!", Toast.LENGTH_LONG).show();
         fileSave.nextFile();
