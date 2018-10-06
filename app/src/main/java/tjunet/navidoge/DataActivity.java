@@ -111,6 +111,8 @@ public class DataActivity extends AppCompatActivity {
                 });
                 builder.setPositiveButton("OK", new DialogInterface.OnClickListener(){
                     public void onClick(DialogInterface dialog, int which) {
+                        controller.saveSettings(Controller.SettingType.data_flags);
+                        controller.loadSettings(Controller.SettingType.data_flags);
                         Toast.makeText(DataActivity.this, controller.getDataTypeString(), Toast.LENGTH_LONG).show();
                     }
                 });
@@ -145,6 +147,8 @@ public class DataActivity extends AppCompatActivity {
                         try{
                             controller.fileSave.setDirNum(editText.getText().toString());
                             controller.fileSave.setFileNum(editText2.getText().toString());
+                            controller.saveSettings(Controller.SettingType.file);
+                            controller.loadSettings(Controller.SettingType.file);
                             Toast.makeText(DataActivity.this, controller.fileSave.getFileName(), Toast.LENGTH_LONG).show();
                         } catch (Exception e){
                             Toast.makeText(DataActivity.this, "FAILED!", Toast.LENGTH_LONG).show();
@@ -163,7 +167,11 @@ public class DataActivity extends AppCompatActivity {
                 final Button button_time=view.findViewById(R.id.button_time);
                 final ToggleButton toggleButton=view.findViewById(R.id.toggleButton);
                 final ToggleButton toggleButton2=view.findViewById(R.id.toggleButton2);
+                // set default value
                 textView2.setText(controller.getSettingString());
+                toggleButton.setChecked(controller.sensors.eventMode);
+                toggleButton2.setChecked(controller.wifi_async_scan);
+
                 button_interval.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -203,6 +211,8 @@ public class DataActivity extends AppCompatActivity {
                 builder.setPositiveButton("OK",new DialogInterface.OnClickListener(){
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        controller.saveSettings(Controller.SettingType.other_settings);
+                        controller.loadSettings(Controller.SettingType.other_settings);
                     }
                 });
                 break;

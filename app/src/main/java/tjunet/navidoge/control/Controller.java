@@ -1,8 +1,10 @@
 package tjunet.navidoge.control;
 
+import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.BitmapFactory;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
@@ -40,7 +42,7 @@ public class Controller implements Serializable {
     private java.text.DecimalFormat df = new java.text.DecimalFormat("#0.00");
     public int interval=200;
     public int log_time=60;
-    public double log_time_left=log_time;
+    public double log_time_left=0;
     private NotificationManager notificationManager;
     private Notification notification;
     private int display_index=0;
@@ -64,15 +66,60 @@ public class Controller implements Serializable {
         vibrator = (Vibrator)context.getSystemService(Context.VIBRATOR_SERVICE);
         notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         items=context.getResources().getStringArray(R.array.data_type);
+        for(SettingType settingType:SettingType.values()){
+            loadSettings(settingType);
+        }
         notification= new Notification.Builder(context)
                 .setContentTitle("通知 ")
                 .setContentText("WiFi 记录完成")
                 .setSmallIcon(R.mipmap.ic_launcher)
                 .setLargeIcon((BitmapFactory.decodeResource(context.getResources(), R.mipmap.ic_launcher))).getNotification();
-
         timer();
     }
-
+    @SuppressLint("ApplySharedPref")
+    public enum SettingType{data_flags,other_settings,file}
+    public boolean saveSettings(SettingType settingType){
+        SharedPreferences sharedPreferences = context.getSharedPreferences("settings.sp", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        switch(settingType){
+            case data_flags:
+                for(int i=0;i<data_flags.length;i++){
+                    editor.putBoolean("data_flags_"+i, data_flags[i]);
+                }
+                break;
+            case other_settings:
+                editor.putInt("interval",interval);
+                editor.putInt("log_time",log_time);
+                editor.putBoolean("wifi_async_scan",wifi_async_scan);
+                editor.putBoolean("sensors.eventMode",sensors.eventMode);
+                break;
+            case file:
+                editor.putInt("dirNum",fileSave.getDirNum());
+                editor.putInt("fileNum",fileSave.getFileNum());
+                break;
+        }
+        return editor.commit();
+    }
+    public void loadSettings(SettingType settingType){
+        SharedPreferences sharedPreferences = context.getSharedPreferences("settings.sp", Context.MODE_PRIVATE);
+        switch(settingType){
+            case data_flags:
+                for(int i=0;i<data_flags.length;i++){
+                    data_flags[i] = sharedPreferences.getBoolean("data_flags_"+i, data_flags[i]);
+                }
+                break;
+            case other_settings:
+                interval = sharedPreferences.getInt("interval", interval);
+                log_time = sharedPreferences.getInt("log_time", log_time);
+                wifi_async_scan = sharedPreferences.getBoolean("wifi_async_scan", wifi_async_scan);
+                sensors.eventMode = sharedPreferences.getBoolean("sensors.eventMode", sensors.eventMode);
+                break;
+            case file:
+                fileSave.setDirNum(sharedPreferences.getInt("dirNum", fileSave.getDirNum())+"");
+                fileSave.setFileNum(sharedPreferences.getInt("fileNum", fileSave.getFileNum())+"");
+                break;
+        }
+    }
     public String getSettingString(){
         setting_strings[0]=getDataTypeString();
         setting_strings[1]="FILE     : "+fileSave.getFileName();
@@ -185,6 +232,7 @@ public class Controller implements Serializable {
         wiFiScan.recordNo=0;
         Toast.makeText(context, fileSave.getFileName()+" saved!", Toast.LENGTH_LONG).show();
         fileSave.nextFile();
+        saveSettings(SettingType.file);
     }
 
     private void startAsyncScan(){
