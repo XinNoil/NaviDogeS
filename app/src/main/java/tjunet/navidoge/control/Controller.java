@@ -66,9 +66,6 @@ public class Controller implements Serializable {
         vibrator = (Vibrator)context.getSystemService(Context.VIBRATOR_SERVICE);
         notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         items=context.getResources().getStringArray(R.array.data_type);
-        for(SettingType settingType:SettingType.values()){
-            loadSettings(settingType);
-        }
         notification= new Notification.Builder(context)
                 .setContentTitle("通知 ")
                 .setContentText("WiFi 记录完成")
@@ -209,10 +206,11 @@ public class Controller implements Serializable {
     };
 
     public void startLog(){
-        log_time_left = log_time;
         if (logging){
             Toast.makeText(context, "CAN NOT START WHEN LOGGING!", Toast.LENGTH_LONG).show();
+            return;
         }
+        log_time_left = log_time;
         if (log_time>0)
             handler.postDelayed(runnable_stopLog, log_time*1000);
         sensors.initOutputBuilders();

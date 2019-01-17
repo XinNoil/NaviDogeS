@@ -22,6 +22,7 @@ import tjunet.navidoge.control.Display;
 public class DataActivity extends AppCompatActivity {
     private int buttonNum=4;
     private Button[] buttons=new Button[buttonNum];
+    private final static int LOAD_SETTINGS=0;
     private final static int DATA_TYPE=1;
     private final static int FILE_SET=2;
     private final static int OTHER_SET=3;
@@ -36,6 +37,7 @@ public class DataActivity extends AppCompatActivity {
         setContentView(R.layout.activity_data);
         setTextViews();
         setButtons();
+        showDialog(LOAD_SETTINGS);
         display=new Display(textViews);
         controller=new Controller(this);
         controller.setDisplay(display);
@@ -102,6 +104,22 @@ public class DataActivity extends AppCompatActivity {
         AlertDialog.Builder builder=new android.app.AlertDialog.Builder(this);
         View view;
         switch (id) {
+            case LOAD_SETTINGS:
+                builder.setTitle("LOAD SETTINGS");
+                builder.setPositiveButton("YES", new DialogInterface.OnClickListener(){
+                    public void onClick(DialogInterface dialog, int which) {
+                        for(Controller.SettingType settingType: Controller.SettingType.values()){
+                            controller.loadSettings(settingType);
+                        }
+                        Toast.makeText(DataActivity.this, "Load settings ok!", Toast.LENGTH_LONG).show();
+                    }
+                });
+                builder.setNegativeButton("NO", new DialogInterface.OnClickListener(){
+                    public void onClick(DialogInterface dialog, int which) {
+                        Toast.makeText(DataActivity.this, "Default settings!", Toast.LENGTH_LONG).show();
+                    }
+                });
+                break;
             case DATA_TYPE:
                 builder.setTitle("DATA TYPE");
                 builder.setMultiChoiceItems(R.array.data_type, controller.data_flags, new DialogInterface.OnMultiChoiceClickListener(){
